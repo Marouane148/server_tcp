@@ -1,41 +1,29 @@
-# Jeu Client-Serveur TCP
+# Serveur TCP – Projet Jeu Réseau
 
-Ce projet implémente un jeu interactif où les joueurs (loup ou villageois) interagissent avec un serveur en utilisant des connexions TCP.
+## 🎯 Rôle
 
-## Installation
+Ce serveur TCP fait le lien entre :
+- Les **clients** du jeu (qui envoient des requêtes au format JSON)
+- Le **moteur d’administration TCP** (pour inscrire les joueurs)
+- Le **moteur de jeu gRPC** (pour gérer les actions en jeu)
 
-### Prérequis
+Ce serveur **ne contient aucune logique de jeu**. Il agit uniquement comme un **proxy** vers les deux moteurs.
 
-- Python 3.x
+---
 
-### Étapes d'installation
+## ⚙️ Fonctionnement
 
-1. Clonez ce projet sur votre machine :
+Le serveur écoute les connexions sur `localhost:9999`.  
+Il reçoit des messages JSON sous forme de liste, détermine leur type (`subscribe` ou `action`) et les redirige :
 
-   ```bash
-   git clone https://github.com/ilyaslahfaouti/client_TCP.git
-   cd client_TCP
+- Vers le **moteur d'administration** via une socket TCP pour les inscriptions.
+- Vers le **moteur de jeu gRPC** pour les actions.
 
-Lancez le serveur :
+---
 
-python server_tcp.py
+## 📥 Messages supportés
 
-Vous devriez voir ce message dans le terminal indiquant que le serveur est en écoute :
-Serveur en écoute sur localhost : 9999
+### 1. `subscribe` – Inscription d'un joueur
 
-
-Lancez le client :
-
-python client_tcp.py
-
-
-Vous verrez un menu dans le terminal comme celui-ci :
-
-    --- Menu ---
-1. S'inscrire
-2. Envoyer une action
-3. Quitter
-Choix :
-![Description de l'image](image/screen.png)
-
-
+```json
+["subscribe", "pseudo", "role"]
